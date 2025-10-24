@@ -1,6 +1,6 @@
 {
   "name": "semver-demo-npm",
-  "version": "1.2.1-rc.0",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
