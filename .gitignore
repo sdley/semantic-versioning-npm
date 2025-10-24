@@ -55,3 +55,6 @@ coverage-final.json
 
 # --- GitHub Actions cache ---
 .github/workflows/*.yml~
+
+# --- demo-npm.sh ---
+demo-npm.sh
