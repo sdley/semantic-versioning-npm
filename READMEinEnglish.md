@@ -1,111 +1,132 @@
-# ☕ Practical Workshop – Semantic Versioning with Maven
-
-[Voir la version française (README.md)](README.md)
+# Practical Workshop – Semantic Versioning with npm
 
 ## Objective
 
-Apply SemVer to a Java/Maven project, create pre-stable versions, and publish tags/releases on GitHub. The `maven-project` folder contains a ready-to-use mini Maven project.
+To apply **Semantic Versioning (SemVer)** in a Node.js project, create pre-releases (`alpha`, `beta`, `rc`), and publish a GitHub release with a corresponding tag.
 
 ## Prerequisites
 
-- JDK 11+ installed and `mvn` available in PATH
-- Git configured with a GitHub remote ready
+  - Node.js (\>=14) and npm installed
+  - Git configured and a GitHub remote ready (or GitLab)
+  - Access to the GitHub repository to create releases
 
-## 1️⃣ Create / open the Maven project
+## 1️⃣ Initialize the Project (if starting from scratch)
 
-Provided structure:
+```bash
+# From the terminal
+mkdir semver-demo-npm
+cd semver-demo-npm
+npm init -y
+git init
+git branch -M main
+git remote add origin <git_remote_url>
+```
+
+The `package.json` file will contain the initial "version" field.
+
+## 2️⃣ Included Mini-Project (structure)
 
 ```
-maven-project/
-├─ pom.xml   # initial version 1.0.0
-├─ src/
-│  └─ main/java/com/sdley/App.java
+npm-project/
+├─ package.json   # initial version 1.0.0
+├─ index.js        # minimal app
+├─ lib/
+│  └─ calc.js
 └─ README.md
 ```
 
-Excerpt from `pom.xml`:
+Key content of `package.json` (excerpt):
 
-```xml
-<project xmlns="http://maven.apache.org/POM/4.0.0" ...>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.sdley</groupId>
-  <artifactId>semver-demo-maven</artifactId>
-  <version>1.0.0</version>
-</project>
+```json
+{
+  "name": "semver-demo-npm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node -e "console.log('no tests')""
+  }
+}
 ```
 
-## 2️⃣ Initialize Git and make the first commit
+## 3️⃣ Git Workflow + npm version (Practical Examples)
+
+### Initial Commit
 
 ```bash
-git init
 git add .
 git commit -m "chore: initial project v1.0.0"
-git branch -M main
-git remote add origin <git_remote_url>
 git push -u origin main
 ```
 
-## 3️⃣ Use the Maven Versions Plugin to bump versions
+### Minor Bump (feat)
 
-Add the plugin (e.g., already included in the provided `pom.xml`).
-
-### Minor bump
+Add a new feature, then:
 
 ```bash
-mvn versions:set -DnewVersion=1.1.0
-git add pom.xml
-git commit -m "feat: bump to 1.1.0"
-git tag v1.1.0
+# code change...
+git add .
+git commit -m "feat: add multiply function"
+npm version minor    # -> 1.1.0 ; creates tag v1.1.0
 git push origin main --tags
 ```
 
-### Patch bump
+### Patch Bump (fix)
 
 ```bash
-mvn versions:set -DnewVersion=1.1.1
-git add pom.xml
-git commit -m "fix: bump to 1.1.1"
-git tag v1.1.1
+# fix code...
+git add .
+git commit -m "fix: handle edge case in calc"
+npm version patch    # -> 1.1.1 ; creates tag v1.1.1
 git push origin main --tags
 ```
 
-## 4️⃣ Pre-release versions (alpha/beta/rc)
-
-Maven doesn’t enforce a specific format but accepts any valid string in `<version>`:
+## 4️⃣ Pre-Stable Versions (Prerelease) and Pre-IDs
 
 ```bash
-mvn versions:set -DnewVersion=1.2.0-alpha-1
-git commit -am "chore(release): 1.2.0-alpha-1"
-git tag v1.2.0-alpha-1
-git push origin main --tags
+# Create an alpha pre-release starting from 1.1.1
+npm version prerelease --preid=alpha    # -> 1.1.2-alpha.0
+
+# Increment the same pre-release:
+npm version prerelease --preid=alpha    # -> 1.1.2-alpha.1
+
+# Switch to beta:
+npm version prerelease --preid=beta     # -> 1.1.2-beta.0
+
+# Release candidate:
+npm version prerelease --preid=rc       # -> 1.1.2-rc.0
 ```
 
-> Example of using a numeric suffix: `-alpha-1`, `-beta-2`, `-rc-1`.
+> Note: `npm version <type>` updates `package.json`, creates a commit, and a tag by default.
 
-## 5️⃣ Build metadata
+## 5️⃣ Versions with Build Metadata
 
-Add to the `pom.xml`:
+Metadata is added manually (npm doesn't directly manage build metadata via `npm version`):
 
-```xml
-<version>1.2.0+build.20251025</version>
+```json
+"version": "1.1.2+build.20251025.01"
 ```
 
-Note: Some Maven tools may reject certain metadata; mainly use it for documentation or CI purposes.
+Metadata (after `+`) doesn't change the semantic sorting but can convey a timestamp, a CI identifier, etc.
 
-## 6️⃣ GitHub Release
+## 6️⃣ Create a GitHub Release from a Tag
 
-Push the tags and create a release from GitHub (similar to npm). Include changelog and release notes.
+1.  `git push origin main --tags`
+2.  Go to GitHub → **Releases** → **Draft a new release**
+3.  Select the tag (e.g., `v1.1.2-rc.0`) or create a new tag in the interface
+4.  Write the changelog (use conventions `feat:`, `fix:`, `BREAKING CHANGE:`)
+5.  Publish release
 
-## 7️⃣ Useful commands
+## 7️⃣ Useful Commands
 
 ```bash
-mvn -v
-mvn clean package
-mvn versions:display-dependency-updates
+npm outdated           # list outdated dependencies
+npm view <pkg> version # see the published version of a package
+npm v                  # equivalent to npm view
 ```
 
-## Expected result
+## Expected Outcome
 
-- `pom.xml` updated according to SemVer
-- Git tags visible on GitHub
-- Documented GitHub release
+  - `package.json` updated according to SemVer
+  - Consistent Git tags (v1.0.0, v1.1.0, v1.1.1, v1.1.2-alpha.0, ...)
+  - GitHub Release created for a stable or pre-stable version
