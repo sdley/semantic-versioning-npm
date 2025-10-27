@@ -1,5 +1,5 @@
 # Atelier Pratique – Semantic Versioning avec npm
-
+See English version ([README.en.md](README.en.md))
 ## Objectif
 
 Appliquer le versionnage sémantique (SemVer) dans un projet Node.js, créer des pré-versions (`alpha`, `beta`, `rc`) et publier une release GitHub avec un tag correspondant.
