@@ -1,6 +1,8 @@
 # Practical Workshop – Semantic Versioning with npm
+
+[Voir la version française (README.md)](README.md)
+
 ## Objective
-Voir la version française ([README.md](README.md))
 
 To apply **Semantic Versioning (SemVer)** in a Node.js project, create pre-releases (`alpha`, `beta`, `rc`), and publish a GitHub release with a corresponding tag.
 
